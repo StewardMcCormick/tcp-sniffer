@@ -1,0 +1,89 @@
+# ==========================================
+# Go
+# ==========================================
+
+# Бинарные файлы и плагины для всех платформ
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Тестовые бинарники, создаваемые при `go test -c`
+*.test
+
+# Результаты покрытия кода (coverage) и профилирования
+*.out
+*.prof
+coverage.txt
+coverage.html
+*.coverprofile
+profile.cov
+
+# Файлы рабочих пространств Go
+go.work
+go.work.sum
+
+# Переменные окружения (секреты, локальные настройки)
+.env
+
+# ==========================================
+# GoLand / JetBrains IDE
+# ==========================================
+
+# Полностью игнорируем папку .idea
+.idea/
+
+# Файлы, специфичные для конкретного пользователя
+*.iws
+
+# Файлы, специфичные для IntelliJ (могут быть избыточны при игнорировании .idea/)
+out/
+
+# Специфичные для плагинов JetBrains
+.idea/**/aws.xml
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+.idea/**/mongoSettings.xml
+.idea/**/replstate.xml
+.idea/**/sonarlint/
+.idea/**/sonarIssues.xml
+.idea/**/azureSettings.xml
+.idea/**/codestream.xml
+
+# ==========================================
+# OS Generated Files
+# ==========================================
+
+# --- macOS ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+Icon
+.fseventsd
+.TemporaryItems
+.VolumeIcon.icns
+.apdisk
+*.icloud
+
+# --- Windows ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# --- Linux ---
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
