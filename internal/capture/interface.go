@@ -1,6 +1,9 @@
 package capture
 
-import "time"
+import (
+	"net"
+	"time"
+)
 
 type Packet struct {
 	Data      []byte
@@ -8,11 +11,20 @@ type Packet struct {
 }
 
 type PacketCapturer interface {
-	Run(iface string) error
+	Run() error
 
 	ReadPacket() (Packet, error)
 
 	SetBPFFilter(filter string) error
 
 	Stop() error
+}
+
+func isIfaceAvailable(iface string) bool {
+	_, err := net.InterfaceByName(iface)
+	if err != nil {
+		return false
+	}
+
+	return true
 }

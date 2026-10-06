@@ -1,17 +1,35 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/StewardMcCormick/tcp-analyzer/config"
+	"github.com/StewardMcCormick/tcp-analyzer/internal/capture"
 )
 
 func main() {
 	cfg, err := config.InitConfig()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
-	fmt.Println(cfg.Capturing.Interface)
+	capturer, err := capture.NewCapturer(cfg.Capturing.Interface)
+	if err != nil {
+		panic(err)
+	}
+
+	go func() {
+		if err := capturer.Run(); err != nil {
+			panic(err)
+		}
+	}()
+
+	sig := make(chan os.Signal, 2)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	<-sig
+	if err = capturer.Stop(); err != nil {
+		panic(err)
+	}
 }
