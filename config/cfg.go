@@ -9,9 +9,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
-var (
-	ErrInvalidConfig = errors.New("invalid config")
-)
+var ErrInvalidConfig = errors.New("invalid config")
 
 type AppConfig struct {
 	Capturing struct {

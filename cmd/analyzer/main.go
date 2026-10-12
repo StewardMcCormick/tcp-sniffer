@@ -6,7 +6,7 @@ import (
 	"syscall"
 
 	"github.com/StewardMcCormick/tcp-analyzer/config"
-	"github.com/StewardMcCormick/tcp-analyzer/internal/capture"
+	"github.com/StewardMcCormick/tcp-analyzer/internal/sniffer"
 )
 
 func main() {
@@ -15,7 +15,8 @@ func main() {
 		panic(err)
 	}
 
-	capturer, err := capture.NewCapturer(cfg.Capturing.Interface)
+	engine := sniffer.NewSequentialEngine()
+	capturer, err := sniffer.NewCapturer(cfg.Capturing.Interface, engine)
 	if err != nil {
 		panic(err)
 	}

@@ -1,6 +1,6 @@
-//go:build darwin
+//go:build darwin || linux
 
-package capture
+package sniffer
 
 import (
 	"errors"
@@ -9,29 +9,31 @@ import (
 
 // PacketCapturer implementation for Darwin (MacOS) base on BPF
 type bpfDarwinCapturer struct {
-	iface string
+	iface  string
+	engine Engine
 }
 
-func NewCapturer(iface string) (PacketCapturer, error) {
+func NewCapturer(iface string, engine Engine) (PacketCapturer, error) {
 	if !isIfaceAvailable(iface) {
 		return nil, errors.New("interface " + iface + " is unavailable")
 	}
 
-	return &bpfDarwinCapturer{iface: iface}, nil
+	return &bpfDarwinCapturer{iface: iface, engine: engine}, nil
 }
 
 func (b *bpfDarwinCapturer) Run() error {
 	log.Printf("[INFO] Start BPF Darwin Capturer on %s", b.iface)
+
 	return nil
 }
 
 func (b *bpfDarwinCapturer) ReadPacket() (Packet, error) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (b *bpfDarwinCapturer) SetBPFFilter(filter string) error {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 

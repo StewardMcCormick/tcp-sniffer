@@ -1,4 +1,4 @@
-package capture
+package sniffer
 
 import (
 	"net"
@@ -22,9 +22,6 @@ type PacketCapturer interface {
 
 func isIfaceAvailable(iface string) bool {
 	_, err := net.InterfaceByName(iface)
-	if err != nil {
-		return false
-	}
 
-	return true
+	return err == nil
 }
