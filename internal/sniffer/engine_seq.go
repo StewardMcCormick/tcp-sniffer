@@ -1,7 +1,6 @@
 package sniffer
 
-type sequentialEngine struct {
-}
+type sequentialEngine struct{}
 
 func NewSequentialEngine() Engine {
 	return &sequentialEngine{}
