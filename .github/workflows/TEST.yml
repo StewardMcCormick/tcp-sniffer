@@ -10,8 +10,6 @@ jobs:
         uses: actions/setup-go@v7
         with:
           go-version: '1.24'
-      - name: Set up GolangCI Lint
-        run: sudo apt install golangci-lint
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
