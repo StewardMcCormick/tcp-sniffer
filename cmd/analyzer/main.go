@@ -16,7 +16,7 @@ func main() {
 	}
 
 	engine := sniffer.NewSequentialEngine()
-	capturer, err := sniffer.NewCapturer(cfg.Capturing.Interface, engine)
+	capturer, err := sniffer.NewPcapCapturer(cfg.Capturing.Interface, engine)
 	if err != nil {
 		panic(err)
 	}

@@ -6,7 +6,7 @@ func NewSequentialEngine() Engine {
 	return &sequentialEngine{}
 }
 
-func (s *sequentialEngine) ProcessPacket(pkt *Packet) {
+func (s *sequentialEngine) ProcessPacket(pkt Packet) {
 	// TODO implement me
 	panic("implement me")
 }

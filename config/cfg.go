@@ -6,15 +6,14 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/StewardMcCormick/tcp-analyzer/internal/sniffer"
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
 var ErrInvalidConfig = errors.New("invalid config")
 
 type AppConfig struct {
-	Capturing struct {
-		Interface string `yaml:"interface"`
-	}
+	Capturing sniffer.Config `yaml:"capturing"`
 }
 
 func (a *AppConfig) validateConfig() error {

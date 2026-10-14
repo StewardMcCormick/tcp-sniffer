@@ -1,2 +1,5 @@
 capturing:
-  interface: "en0"
+  interface: "en0"              # Capturing interface name                    [required]                               String
+  max_snapshot_length: 96       # Max captured snapshot length                [default] = 65536, [recommended] = 96    Uint16
+  promiscuous_mode: false       # Is promiscuous_mode enabled                 [default] = false                        Bool
+  timeout: "25ms"               # RX_RING timeout, if '0' - immediate mode    [default] = 25ms                         time.Duration
