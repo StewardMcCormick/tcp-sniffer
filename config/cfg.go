@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"log"
 
@@ -40,14 +39,4 @@ func InitConfig() (*AppConfig, error) {
 	}
 
 	return cfg, nil
-}
-
-func parseCLIArgsInCfg(cfg *AppConfig) {
-	flagIfaceName := flag.String("i", "", "capturing interface name")
-
-	flag.Parse()
-
-	if flagIfaceName != nil && *flagIfaceName != "" {
-		cfg.Capturing.Interface = *flagIfaceName
-	}
 }
