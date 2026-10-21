@@ -3,6 +3,7 @@ package sniffer
 import (
 	"errors"
 	"log"
+	"time"
 )
 
 // PacketCapturer implementation using gopacket
@@ -20,7 +21,9 @@ func NewPcapCapturer(iface string, engine Engine) (PacketCapturer, error) {
 }
 
 func (b *pcapCapturer) Run() error {
-	return nil
+	for {
+		time.Sleep(time.Second) //nolint TODO: will fix in future commits
+	}
 }
 
 func (b *pcapCapturer) ReadPacket() (Packet, error) {

@@ -1,3 +1,5 @@
+//go:build ignore
+
 package config
 
 import (
@@ -23,11 +25,12 @@ func (v *uint16Value) Set(s string) error {
 }
 
 func parseCLIArgsInCfg(cfg *AppConfig) {
-	flagIfaceName := flag.String("i", "", "capturing interface name")
+	flagIfaceName := flag.String("i", "", "capturing interface name, [required]")
 	flagSnapshotLength := uint16Value(65535)
-	flag.Var(&flagSnapshotLength, "snaplen", "max captured snapshot length")
-	flagPromiscuousMode := flag.Bool("promisc", false, "enable promiscuous mode")
-	flagTimeout := flag.Duration("t", 25*time.Millisecond, "RX_RING timeout, if '0' - immediate mode")
+	flag.Var(&flagSnapshotLength, "snaplen", "max captured snapshot length, [default] = 65535")
+	flagPromiscuousMode := flag.Bool("promisc", false, "enable promiscuous mode, [default] = false")
+	flagTimeout := flag.Duration("t", 25*time.Millisecond, "RX_RING timeout, if '0' - immediate mode, [default] = 25ms")
+	flagEngineType := flag.String("engine.type", "sequential", "type of packet processing engine, [default] = 'sequential'")
 
 	flag.Parse()
 
@@ -47,5 +50,8 @@ func parseCLIArgsInCfg(cfg *AppConfig) {
 	}
 	if set["t"] {
 		cfg.Capturing.Timeout = *flagTimeout
+	}
+	if set["engine.type"] {
+		cfg.Capturing.Engine.Type = EngineType(*flagEngineType)
 	}
 }
