@@ -27,7 +27,7 @@ var rootCmd = &cobra.Command{
 }
 
 func run() error {
-	cfg, err := config.Load()
+	cfg, err := config.Load(cfgPath)
 	if err != nil {
 		return fmt.Errorf("%w - %w", ErrApplicationCannotRun, err)
 	}
@@ -60,7 +60,7 @@ func run() error {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&cfgPath, "config", "c", "", "config filepath (default is ./config.yaml)")
+	rootCmd.PersistentFlags().StringVarP(&cfgPath, "config", "c", "config.yaml", "config filepath")
 
 	rootCmd.Flags().StringP("interface", "i", "", "capturing interface name.")
 	rootCmd.Flags().Uint16P("snaplen", "s", 65535, "maximum captured snapshot length.")

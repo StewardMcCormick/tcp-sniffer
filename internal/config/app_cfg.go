@@ -3,14 +3,14 @@ package config
 import (
 	"errors"
 	"fmt"
-	"io"
-	"log"
+	"os"
 
-	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/spf13/viper"
 )
 
 var ErrInvalidAppConfig error = errors.New("invalid application config")
+
+var ErrCannotReadConfig error = errors.New("cannot read configuration file")
 
 type AppConfig struct {
 	Capturing SnifferConfig `mapstructure:"capturing"`
@@ -24,34 +24,24 @@ func (ac *AppConfig) Validate() error {
 	return nil
 }
 
-func InitConfig() (*AppConfig, error) {
-	cfg := &AppConfig{}
-	if err := cleanenv.ReadConfig("config.yaml", cfg); err != nil {
-		if !errors.Is(err, io.EOF) {
-			log.Fatalf("[ERROR] Cannot read 'config.yaml' file - %v", err)
+func Load(configPath string) (*AppConfig, error) {
+	viper.SetConfigFile(configPath)
+
+	return load(viper.GetViper())
+}
+
+func load(v *viper.Viper) (*AppConfig, error) {
+	if err := v.ReadInConfig(); err != nil {
+		var notFound viper.ConfigFileNotFoundError
+		if !errors.As(err, &notFound) && !errors.Is(err, os.ErrNotExist) {
+			return nil, fmt.Errorf("%w - %w", ErrCannotReadConfig, err)
 		}
 	}
 
-	if err := cfg.Capturing.Validate(); err != nil {
-		log.Fatalf("[ERROR] Invalid configuration - %v", err)
-	}
-
-	return cfg, nil
-}
-
-func Load() (*AppConfig, error) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-
-	if err := viper.ReadInConfig(); err != nil {
-		log.Printf("[WARNING] Cannot read configuration file - %v", err)
-	}
-
 	cfg := &AppConfig{}
 
-	if err := viper.Unmarshal(&cfg); err != nil {
-		log.Fatalf("[ERROR] Cannot parse configuration - %v", err)
+	if err := v.Unmarshal(&cfg); err != nil {
+		return nil, fmt.Errorf("cannot parse config - %w", err)
 	}
 
 	if err := cfg.Validate(); err != nil {
