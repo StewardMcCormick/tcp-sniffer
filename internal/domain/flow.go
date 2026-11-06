@@ -5,6 +5,7 @@ type Flow struct {
 	Server     FlowMember
 	Client     FlowMember
 	RolesKnown bool
+	Stats      Stats
 }
 
 type FlowKey struct {

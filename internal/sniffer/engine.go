@@ -1,5 +1,6 @@
 package sniffer
 
 type Engine interface {
-	ProcessPacket(pkt Packet)
+	ProcessFrame(data []byte)
+	Stop() error
 }

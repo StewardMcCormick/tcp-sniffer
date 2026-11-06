@@ -1,21 +1,17 @@
 package sniffer
 
 import (
+	"errors"
 	"net"
-	"time"
 )
 
-type Packet struct {
-	Data      []byte
-	Timestamp time.Time
-}
+var (
+	ErrCannotInitializeSniffer = errors.New("cannot initialize error")
+	ErrCannotCloseSniffer      = errors.New("cannot stop sniffer")
+)
 
 type PacketCapturer interface {
 	Run() error
-
-	ReadPacket() (Packet, error)
-
-	SetBPFFilter(filter string) error
 
 	Stop() error
 }

@@ -32,8 +32,7 @@ func run() error {
 		return fmt.Errorf("%w - %w", ErrApplicationCannotRun, err)
 	}
 
-	engine := sniffer.NewSequentialEngine()
-	capturer, err := sniffer.NewPcapCapturer(cfg.Capturing.Interface, engine)
+	capturer, err := sniffer.NewPcapCapturer(cfg.Capturing)
 	if err != nil {
 		return fmt.Errorf("%w - %w", ErrApplicationCannotRun, err)
 	}

@@ -65,5 +65,9 @@ func (sc *SnifferConfig) Validate() error {
 		return nil
 	}
 
+	if sc.Timeout <= 0 {
+		sc.Timeout = -10 * time.Millisecond
+	}
+
 	return fmt.Errorf("%w - %w", ErrInvalidSnifferConfig, errors.Join(errs...))
 }
