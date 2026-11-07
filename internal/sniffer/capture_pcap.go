@@ -7,6 +7,7 @@ import (
 	"net"
 
 	"github.com/StewardMcCormick/tcp-analyzer/internal/config"
+	"github.com/StewardMcCormick/tcp-analyzer/internal/packet"
 	"github.com/google/gopacket/pcap"
 )
 
@@ -14,6 +15,7 @@ import (
 type pcapCapturer struct {
 	cfg    config.SnifferConfig
 	engine Engine
+	parser *packet.Parser
 }
 
 func NewPcapCapturer(cfg config.SnifferConfig) (PacketCapturer, error) {
@@ -29,9 +31,12 @@ func NewPcapCapturer(cfg config.SnifferConfig) (PacketCapturer, error) {
 		return nil, errors.New("unsupported engine type")
 	}
 
+	parser := packet.NewParser()
+
 	return &pcapCapturer{
 		cfg:    cfg,
 		engine: engine,
+		parser: parser,
 	}, nil
 }
 
@@ -42,26 +47,37 @@ func (b *pcapCapturer) Run() error {
 	}
 	defer h.Close()
 
+	rootKind, err := LinkKindFromDLT(uint32(h.LinkType()))
+	if err != nil {
+		return fmt.Errorf("unsupported link type %v: %w", h.LinkType(), err)
+	}
+	root := rootKind.Key()
+
+	log.Printf("[INFO] Starting capture on %s, link type: %s", b.cfg.Interface, rootKind)
+
 	for {
 		data, ci, err := h.ReadPacketData()
 		if err != nil {
 			var netErr net.Error
 			if ok := errors.Is(err, netErr); (ok && netErr.Timeout()) || errors.Is(err, pcap.NextErrorTimeoutExpired) {
-				log.Println("[INFO] No any packets for capturing.")
+				log.Println("[INFO] No packets for capturing.")
 				continue
 			}
 			log.Printf("[ERROR] Packet capturing error: %v\n", err)
 			continue
 		}
 
-		log.Printf("[INFO] New packet: %v, timestamp: %v\n, Total length: %d", data, ci.Timestamp, ci.Length) // TODO: will delete in future commits
-		log.Printf("[INFO] Captured data length: %d", len(data))
-
-		if err != nil {
-			log.Printf("[WARNING] Packet parsing error: %v\n", err)
+		if ci.CaptureLength < ci.Length {
+			data = data[:ci.CaptureLength]
 		}
 
-		b.engine.ProcessFrame(data)
+		pkt, err := b.parser.Parse(data, root)
+		if err != nil {
+			log.Printf("[WARNING] Packet parsing error: %v\n", err)
+			continue
+		}
+
+		b.engine.ProcessPacket(pkt)
 	}
 }
 

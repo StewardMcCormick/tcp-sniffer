@@ -2,6 +2,8 @@ package sniffer
 
 import (
 	"time"
+
+	"github.com/StewardMcCormick/tcp-analyzer/internal/packet"
 )
 
 type sequentialEngine struct{}
@@ -10,7 +12,7 @@ func NewSequentialEngine() Engine {
 	return &sequentialEngine{}
 }
 
-func (s *sequentialEngine) ProcessFrame(data []byte) {
+func (s *sequentialEngine) ProcessPacket(pkt packet.Packet) {
 	time.Sleep(500*time.Millisecond) //nolint TODO: will fix in future commits
 }
 
