@@ -1,21 +1,23 @@
 package sniffer
 
 import (
-	"time"
-
 	"github.com/StewardMcCormick/tcp-analyzer/internal/packet"
+	"github.com/StewardMcCormick/tcp-analyzer/internal/storage"
 )
 
-type sequentialEngine struct{}
+type sequentialEngine struct {
+	flowStorage storage.FlowStorage
+}
 
-func NewSequentialEngine() Engine {
-	return &sequentialEngine{}
+func NewSequentialEngine(flowStorage storage.FlowStorage) Engine {
+	return &sequentialEngine{
+		flowStorage: flowStorage,
+	}
 }
 
 func (s *sequentialEngine) ProcessPacket(pkt packet.Packet) {
-	time.Sleep(500*time.Millisecond) //nolint TODO: will fix in future commits
 }
 
-func (s *sequentialEngine) Stop() error  {
+func (s *sequentialEngine) Stop() error {
 	return nil
 }

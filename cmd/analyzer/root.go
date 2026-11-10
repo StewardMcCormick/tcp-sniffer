@@ -10,6 +10,7 @@ import (
 
 	"github.com/StewardMcCormick/tcp-analyzer/internal/config"
 	"github.com/StewardMcCormick/tcp-analyzer/internal/sniffer"
+	"github.com/StewardMcCormick/tcp-analyzer/internal/storage"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -32,7 +33,8 @@ func run() error {
 		return fmt.Errorf("%w - %w", ErrApplicationCannotRun, err)
 	}
 
-	capturer, err := sniffer.NewPcapCapturer(cfg.Capturing)
+	flowStorage := storage.NewRwMutexMapStorage()
+	capturer, err := sniffer.NewPcapCapturer(cfg.Capturing, flowStorage)
 	if err != nil {
 		return fmt.Errorf("%w - %w", ErrApplicationCannotRun, err)
 	}

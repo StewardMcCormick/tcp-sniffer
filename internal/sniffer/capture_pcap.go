@@ -8,6 +8,7 @@ import (
 
 	"github.com/StewardMcCormick/tcp-analyzer/internal/config"
 	"github.com/StewardMcCormick/tcp-analyzer/internal/packet"
+	"github.com/StewardMcCormick/tcp-analyzer/internal/storage"
 	"github.com/google/gopacket/pcap"
 )
 
@@ -18,7 +19,7 @@ type pcapCapturer struct {
 	parser *packet.Parser
 }
 
-func NewPcapCapturer(cfg config.SnifferConfig) (PacketCapturer, error) {
+func NewPcapCapturer(cfg config.SnifferConfig, storage storage.FlowStorage) (*pcapCapturer, error) {
 	if !isIfaceAvailable(cfg.Interface) {
 		return nil, errors.New("interface " + cfg.Interface + " is unavailable")
 	}
@@ -26,7 +27,7 @@ func NewPcapCapturer(cfg config.SnifferConfig) (PacketCapturer, error) {
 	var engine Engine
 	switch cfg.Engine.Type {
 	case config.EngineTypeSequential:
-		engine = NewSequentialEngine()
+		engine = NewSequentialEngine(storage)
 	default:
 		return nil, errors.New("unsupported engine type")
 	}

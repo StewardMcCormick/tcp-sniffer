@@ -50,15 +50,6 @@ func validAppConfig() *AppConfig {
 	}
 }
 
-func writeConfigFile(t *testing.T, dir, content string) string {
-	t.Helper()
-	path := filepath.Join(dir, "config.yaml")
-	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
-		t.Fatalf("write config file: %v", err)
-	}
-	return path
-}
-
 func TestEngineType_Validate(t *testing.T) {
 	tests := []struct {
 		name    string
