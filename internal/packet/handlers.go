@@ -62,6 +62,7 @@ func parseIPv4(data []byte, pkt *Packet) (int, Key, error) {
 	copy(pkt.IP.DstIP[:], data[16:20])
 	pkt.IP.Protocol = data[9]
 	pkt.IP.IHL = uint8(ihl)
+	pkt.IP.FragOffset = (uint16(data[6])<<8 | uint16(data[7])) & 0x1FFF
 	pkt.HasIP = true
 
 	return ihl, Key{KindIPProto, uint16(pkt.IP.Protocol)}, nil

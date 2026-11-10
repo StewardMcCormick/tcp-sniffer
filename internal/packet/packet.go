@@ -16,10 +16,15 @@ type EthernetLayerHeader struct {
 }
 
 type IPv4LayerHeader struct {
-	SrcIP    [4]byte
-	DstIP    [4]byte
-	Protocol uint8
-	IHL      uint8
+	SrcIP      [4]byte
+	DstIP      [4]byte
+	Protocol   uint8
+	IHL        uint8
+	FragOffset uint16
+}
+
+func (ih IPv4LayerHeader) IsFirstFragment() bool {
+	return ih.FragOffset == 0
 }
 
 type TCPLayerHeader struct {
