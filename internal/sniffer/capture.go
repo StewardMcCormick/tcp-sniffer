@@ -10,12 +10,6 @@ var (
 	ErrCannotCloseSniffer      = errors.New("cannot stop sniffer")
 )
 
-type PacketCapturer interface {
-	Run() error
-
-	Stop() error
-}
-
 func isIfaceAvailable(iface string) bool {
 	_, err := net.InterfaceByName(iface)
 

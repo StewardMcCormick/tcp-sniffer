@@ -3,7 +3,7 @@ package sniffer
 import (
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"net"
 
 	"github.com/StewardMcCormick/tcp-analyzer/internal/config"
@@ -12,14 +12,19 @@ import (
 	"github.com/google/gopacket/pcap"
 )
 
-// PacketCapturer implementation using gopacket
+type Engine interface {
+	ProcessPacket(pkt packet.Packet)
+	Stop() error
+}
+
 type pcapCapturer struct {
 	cfg    config.SnifferConfig
+	log    *slog.Logger
 	engine Engine
 	parser *packet.Parser
 }
 
-func NewPcapCapturer(cfg config.SnifferConfig, storage storage.FlowStorage) (*pcapCapturer, error) {
+func NewPcapCapturer(cfg config.SnifferConfig, log *slog.Logger, storage storage.FlowStorage) (*pcapCapturer, error) {
 	if !isIfaceAvailable(cfg.Interface) {
 		return nil, errors.New("interface " + cfg.Interface + " is unavailable")
 	}
@@ -27,7 +32,7 @@ func NewPcapCapturer(cfg config.SnifferConfig, storage storage.FlowStorage) (*pc
 	var engine Engine
 	switch cfg.Engine.Type {
 	case config.EngineTypeSequential:
-		engine = NewSequentialEngine(storage)
+		engine = NewSequentialEngine(log, storage)
 	default:
 		return nil, errors.New("unsupported engine type")
 	}
@@ -36,6 +41,7 @@ func NewPcapCapturer(cfg config.SnifferConfig, storage storage.FlowStorage) (*pc
 
 	return &pcapCapturer{
 		cfg:    cfg,
+		log:    log,
 		engine: engine,
 		parser: parser,
 	}, nil
@@ -54,17 +60,21 @@ func (b *pcapCapturer) Run() error {
 	}
 	root := rootKind.Key()
 
-	log.Printf("[INFO] Starting capture on %s, link type: %s", b.cfg.Interface, rootKind)
+	b.log.Info("Starting capture",
+		"interface", b.cfg.Interface,
+		"link_type", rootKind,
+	)
 
 	for {
 		data, ci, err := h.ReadPacketData()
 		if err != nil {
 			var netErr net.Error
 			if ok := errors.Is(err, netErr); (ok && netErr.Timeout()) || errors.Is(err, pcap.NextErrorTimeoutExpired) {
-				log.Println("[INFO] No packets for capturing.")
 				continue
 			}
-			log.Printf("[ERROR] Packet capturing error: %v\n", err)
+			b.log.Error("Packet capturing error",
+				"error", err,
+			)
 			continue
 		}
 
@@ -74,7 +84,9 @@ func (b *pcapCapturer) Run() error {
 
 		pkt, err := b.parser.Parse(data, root)
 		if err != nil {
-			log.Printf("[WARNING] Packet parsing error: %v\n", err)
+			b.log.Warn("Cannot parse packet",
+				"error", err,
+			)
 			continue
 		}
 
@@ -87,6 +99,6 @@ func (b *pcapCapturer) Stop() error {
 		return fmt.Errorf("%w - %w", ErrCannotCloseSniffer, err)
 	}
 
-	log.Println("[INFO] Gopacket Capturer stopped")
+	b.log.Info("Gopacket Capturer stopped")
 	return nil
 }

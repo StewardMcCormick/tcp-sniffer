@@ -7,7 +7,7 @@ import (
 )
 
 type rwMutexMapStorage struct {
-	mu    sync.RWMutex
+	_     sync.RWMutex
 	flows map[domain.FlowKey]domain.Flow
 }
 
@@ -18,16 +18,9 @@ func NewRwMutexMapStorage() *rwMutexMapStorage {
 }
 
 func (s *rwMutexMapStorage) Store(flow domain.Flow) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	s.flows[flow.Key] = flow
+	panic("implement me")
 }
 
 func (s *rwMutexMapStorage) Load(key domain.FlowKey) (domain.Flow, bool) {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-
-	flow, ok := s.flows[key]
-	return flow, ok
+	panic("implement me")
 }

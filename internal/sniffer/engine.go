@@ -1,8 +1,17 @@
 package sniffer
 
-import "github.com/StewardMcCormick/tcp-analyzer/internal/packet"
+import (
+	"errors"
 
-type Engine interface {
-	ProcessPacket(pkt packet.Packet)
-	Stop() error
+	"github.com/StewardMcCormick/tcp-analyzer/internal/packet"
+)
+
+var ErrPacketIsNotFirstFragment = errors.New("packet is not first packet")
+
+func validatePacket(pkt packet.Packet) error {
+	if !pkt.IP.IsFirstFragment() {
+		return ErrPacketIsNotFirstFragment
+	}
+
+	return nil
 }

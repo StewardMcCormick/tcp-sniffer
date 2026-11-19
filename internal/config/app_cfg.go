@@ -12,8 +12,14 @@ var ErrInvalidAppConfig error = errors.New("invalid application config")
 
 var ErrCannotReadConfig error = errors.New("cannot read configuration file")
 
+type LoggerConfig struct {
+	Level  string
+	Format string
+}
+
 type AppConfig struct {
 	Capturing SnifferConfig `mapstructure:"capturing"`
+	Logger    LoggerConfig  `mapstructure:"logger"`
 }
 
 func (ac *AppConfig) Validate() error {

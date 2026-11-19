@@ -1,7 +1,10 @@
 capturing:
-  interface: "en0"              # Capturing interface name                    [required]                                      String
-  max_snapshot_length: 96       # Max captured snapshot length                [default] = 65535, [recommended] = 96           Uint16
-  promiscuous_mode: false       # Is promiscuous_mode enabled                 [default] = false                               Bool
+  interface: "en0"              # Capturing interface name                    [required]                                      string
+  max_snapshot_length: 96       # Max captured snapshot length                [default] = 65535, [recommended] = 96           uint16
+  promiscuous_mode: false       # Is promiscuous_mode enabled                 [default] = false                               bool
   timeout: "25ms"               # RX_RING timeout, if '0' - immediate mode    [default] = 25ms                                time.Duration
   engine:
-    type: "sequential"          # Capturing Engine type                       [required], [one of] = {sequential, shared}     String
+    type: "sequential"          # Capturing Engine type                       [required], [one of] = {sequential, shared}     string
+logger:
+  level: "info"                 # Slog logging level                          [default] = info                                string
+  format: "text"                # Slog logging format                         [default] = text                                string
