@@ -7,31 +7,34 @@
 ```mermaid
 flowchart TD
     A[Sniffer] --> B[Parser]
-
     B -->|Invalid / Unsupported| X[Drop]
     B -->|Valid Packet| C[Engine]
+    C --> D[Canonical Flow Key]
+    D --> E[Storage Get / Create]
+    E --> F{New Flow?}
 
-    C --> D[Direction Detection]
-    D --> E[Canonical Flow Key]
-    E --> F[Storage Get / Create]
+    F -->|No| K[Retransmission Detection]
+    F -->|Yes| G{Initial SYN?}
 
-    F --> G{New Flow?}
-    G -->|No| K[Retransmission Detection]
-    G -->|Yes| H{SYN without ACK?}
+    G -->|Yes| H[Identify Client / Server]
+    H --> I[Observation: Complete]
 
-    H -->|Yes| I[Track TCP State]
-    H -->|No| J[Midstream Initialization]
+    G -->|No| J[Midstream Initialization]
+    J --> L[Determine Direction / Roles]
+    L --> M[Observation: Midstream]
 
     I --> K
-    J --> K
+    M --> K
 
-    K --> L{Retransmission?}
-    L -->|Yes| M[Skip RTT Calculation]
-    L -->|No| N[Calculate RTT / SRTT]
+    K --> N{Retransmission?}
+    N -->|Yes| O[Skip RTT Calculation]
+    N -->|No| P[Calculate RTT / SRTT]
 
-    M --> O[Build Stats Update]
-    N --> O
+    O --> Q[Build Stats Update]
+    P --> Q
 
-    O --> P(Apply)
-
+    Q --> R[Flow.UpdateStats]
+    R --> S[Lock Flow Mutex]
+    S --> T[Update Flow State]
+    T --> U[Unlock Flow Mutex]
 ```
