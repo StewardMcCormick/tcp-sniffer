@@ -33,8 +33,5 @@ flowchart TD
     O --> Q[Build Stats Update]
     P --> Q
 
-    Q --> R[Flow.UpdateStats]
-    R --> S[Lock Flow Mutex]
-    S --> T[Update Flow State]
-    T --> U[Unlock Flow Mutex]
+    Q --> R(Apply)
 ```
